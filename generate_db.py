@@ -61,7 +61,7 @@ class App:
         label = test(
                 image=self.most_recent_capture_arr,
                 model_dir='resources/anti_spoof_models',
-                device_id=0
+                device_id="cpu"
                 )
         if label == 1:
 
@@ -83,7 +83,7 @@ class App:
         label = test(
                 image=self.most_recent_capture_arr,
                 model_dir='resources/anti_spoof_models',
-                device_id=0
+                device_id="cpu"
                 )
         if label == 1:
 

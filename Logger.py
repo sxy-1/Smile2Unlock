@@ -25,7 +25,7 @@ class Logger:
         )
 
         # 指定日志输出路径
-        self.log_path = "../../pyqt/CQPUT_Link/log/"
+        self.log_path = "./log/"
         if not Path(self.log_path).is_dir():
             os.makedirs(self.log_path)
 
