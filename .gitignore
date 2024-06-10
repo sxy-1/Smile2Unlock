@@ -9,3 +9,54 @@
 /generate_tree.py
 /pip_requirements.txt
 /requirements.txt
+
+
+# Python
+*.pyc
+__pycache__/
+
+# database
+*.db
+
+# PyQt
+*.pyproj
+*.pyproj.user
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+.idea/
+
+
+
+# Compiled files
+build/
+dist/
+dist - 副本/
+log/
+account.db
+config.json
+generate_tree.py
+net_speed.py
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PyInstaller
+__pycache__/
+*.pyc
+*.pyo
+*.spec
+dist/
+build/
+
+
+# Virtualenv
+venv/
+*.venv/
