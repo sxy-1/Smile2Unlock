@@ -62,7 +62,7 @@ class loginSystem:
 
                 break
 
-            if self.lose_count >= 10:
+            if self.lose_count >= 120:
                 try:
                     self.hook.kill_program()
                 except:
@@ -73,7 +73,7 @@ class loginSystem:
                 break
 
             threading.Thread(target=self.process_frame).start()
-            time.sleep(5)
+            time.sleep(0.5)
 
 
 if __name__ == "__main__":

@@ -65,7 +65,7 @@ def recognize(img, db_path):
         file = open(path_, 'rb')
         embeddings = pickle.load(file)
 
-        match = face_recognition.compare_faces([embeddings], embeddings_unknown)[0]
+        match = face_recognition.compare_faces([embeddings], embeddings_unknown,tolerance=0.5)[0]
         j += 1
 
     if match:
