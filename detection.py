@@ -49,6 +49,7 @@ class loginSystem:
         while True:
             # self.hook.kill_program()
             if self.hook.status == 0:
+                self.hook.kill_program()
                 # 快捷键退出
                 break
             if self.success_count >= 1:
