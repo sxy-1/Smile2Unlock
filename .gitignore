@@ -1,3 +1,6 @@
+# special
+*.doc
+
 /log.txt
 /db/
 /backup/
@@ -60,3 +63,5 @@ build/
 # Virtualenv
 venv/
 *.venv/
+
+
