@@ -28,10 +28,10 @@ class loginSystem:
     def process_frame(self):
         print("开始检测")
         log.info("开始检测")
-        if self.success_count >= 1 or self.lose_count >= 10:
-            return
+
         ret, frame = self.camera.read()
         if not ret:
+            self.lose_count += 1
             return False
 
         result = self.login.login(frame)
@@ -50,14 +50,17 @@ class loginSystem:
             # self.hook.kill_program()
             if self.hook.status == 0:
                 self.hook.kill_program()
+                log.info("快捷键退出")
                 # 快捷键退出
                 break
             if self.success_count >= 1:
                 self.hook.kill_program()
+                log.info("success_count>=1,try to kill hook")
                 try:
                     self.hook.kill_program()
                 except:
                     pass
+                log.info("fail")
                 print("ok")
                 log.info("ok")
 
