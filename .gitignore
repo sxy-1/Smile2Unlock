@@ -14,7 +14,7 @@ config.json
 /generate_tree.py
 /pip_requirements.txt
 /requirements.txt
-
+.vs/
 
 # Python
 *.pyc
@@ -23,15 +23,7 @@ __pycache__/
 # database
 *.db
 
-# PyQt
-*.pyproj
-*.pyproj.user
-*.suo
-*.user
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
+
 .idea/
 
 
