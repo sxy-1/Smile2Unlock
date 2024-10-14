@@ -12,7 +12,7 @@
   <img width="18%" align="center" src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406050530509.jpg" alt="logo">
 </p>
   <h1 align="center">
-  Smile2Unlock
+  Smile2Unlock(cp凭据分支)
 </h1>
 <p align="center">
   帮助无"windows Hello"摄像头的电脑，在开机/解锁时，进行人脸识别
@@ -29,6 +29,7 @@
   </a>
 </p>
 
+
 ### 支持
 
 - [x] 人脸识别
@@ -37,11 +38,7 @@
 
 - [x] 活体检测（防止照片解锁）
 
-- [x] 备用解锁方式（可关闭）
-
 - [x] 数据持久化
-
-- [x] 开机自启/解锁自启
 
 - [x] 多用户识别
   
@@ -51,13 +48,9 @@
   
   
 
-<img src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406101920647.png" alt="image-20240610192029932" style="zoom: 33%;" />
 
-运行时，键鼠将禁止使用（防止任务管理器退出），必须在一分钟内人脸识别成功（每0.5秒一次检测，共120次），自动解锁，否则锁定计算机。
 
-上图为透明度为0.5时，显示屏状态，透明度可调。
-
-此外，本程序在人脸识别时并不会展示当前人脸，正如上图，您可以根据需求自行修改代码。
+在windows登录界面选择本凭据，直接登录，便会启动程序，进行人脸识别，若10秒内未出现预设人脸，则退回，使用密码登录。
 
 
 
@@ -71,24 +64,26 @@
 
 由于环境错综复杂，本项目也不提供requirements.txt 
 
+请注意，本项目强烈推荐使用conda环境，但不要使用conda install,只使用pip install，否则将在凭据生成后产生引用问题
+
 推荐按照以下步骤使用
 
 1.创建conda环境
 
 ```
-conda create -n Smile2Unlock_last
+conda create --name smile2unlock_cp python=3.11.9
 ```
 
 2.安装 cmake（可能不需要指定镜像）
 
 ```
-pip install cmake==3.29.3 -i https://pypi.mirrors.ustc.edu.cn/simple/
+pip install cmake==3.29.3 -i https://pypi.tuna.tsinghua.edu.cn/simple 
 ```
 
-3.安装 dlib 
+3.安装 dlib  推荐使用pip安装轮子文件
 
 ```
-conda install -c https://conda.anaconda.org/conda-forge dlib 
+https://blog.csdn.net/AI_dataloads/article/details/134063212
 ```
 
 4.安装 face_recognition
@@ -100,109 +95,51 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple face_recognition
 5.安装其他必要库
 
 ```
-pip install opencv-contrib-python==4.9.0.80
-pip install pynput 
-pip install screeninfo
-```
-
-该版本测试成功，仅供参考：
+pip install opencv-contrib-python==4.9.0.80 pynput screeninfo numpy==1.26.4 torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 face_recognition -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ```
-python=3.11.9		创建conda指定版本
-cmake=3.29.3
+
+总结：该版本测试成功，仅供参考：
+
+```
+python=3.11.9		创建conda指定版本，推荐该版本
+cmake=3.29.3		最新版皆可，无严格版本限制
 dlib=19.24.4		特殊的，只有此库使用conda安装
 face-recognition=1.3.0
 opencv-contrib-python=4.9.0.80
 pynput=1.7.7
 screeninfo=0.8.1
+torch=2.2.2
+torchaudio=2.2.2
+torchvision=0.17.2
+numpy=1.26.4
 ```
 
-### 2. 导入自身人脸数据
+### 2. 导入至系统凭据
 
-在进入conda环境后，运行 python generate_db.py 在gui界面录入即可
+1.在进入conda环境后，运行 python generate_db.py 在gui界面录入,
 
-本流程仅需一次，如改人脸需要删除，在db文件夹下直接删除即可。
+2.随后在config.json中，修改您的password.
 
+3.在main.py中，修改您的conda路径和项目路径
 
+4.从visual studio中，修改您的引用库
 
-### 3. 尝试启动
+参考 [C++调用python文件]https://blog.csdn.net/larryysw/article/details/106215035)  以及[C++调用Python第2讲 _哔哩哔哩_](https://www.bilibili.com/video/BV1Ze411h7vA/?spm_id_from=333.788.videopod.sections&vd_source=df034c933ea08326f3a58a38fa1c7fce)
 
-编辑detetion.bat 文件
+5.修改cpp->Source Files->CSampleCredential.cpp->GetSerialization中的项目路径
 
- 可以直接运行，查看效果
-
-### 4. 加入开机自启
-
-参考[windows锁屏时启动某个程序（使用win任务计划库）_windows 计划任务 用户登录时运行 锁屏状态执行吗-CSDN博客](https://blog.csdn.net/weixin_45285564/article/details/133299981)
-
-![](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102010831.png)
-
-值得注意的是 请务必指定bat文件夹路径（在“起始于”中填写文件夹）
-
-![image-20240610200531469](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102005548.png)
-
-完成后，您可以在右侧运行中尝试运行。
+6.生成dll，移动至system32,运行cpp根目录下的register.reg
 
 
 
-### 5. 其他
+### 3. 交流
 
-您可以在config.json中启动特殊按键，1为启动（默认），0为关闭，当开启时，你可以按下“分钟的十分位”来强制关闭人脸识别，比如“20:13”可以按数字“1”。
-
-您可以在config,json中设置透明度，1为完全透明，0为完全不透明，默认0.5
+笔者并不期望读者仅根据以上文字便能成功注册凭证系统，如果您有任何不理解的地方，请加入QQ群：702645243
 
 
 
-### 6.打包
-
- 本程序曾尝试pyinstaller打包为exe，但失败，以下为部分解决办法，如果您成功打包，欢迎与我联系。
-
-
-
-#### 1
-
-```
-shape_predictor_68_face_landmarks.dat
-[24320] Failed to execute script 'main' due to unhandled exception!
-```
-
-请手动在  **_internal**  文件夹中添加 face_recognition_models 文件夹（在源conda的lib库中）
-
-#### 2.
-```
-FAILED: ReadProtoFromTextFile(param_file, param). Failed to parse NetParameter file: ./resources/detection_model/deploy.prototxt in function 'cv::dnn::ReadNetParamsFromTextFileOrDie'
-```
-
-复制resource文件夹至根目录
-
-
-
-#### 3. 无法解决的报错
-
-Could not locate cudnn_ops_infer64_8.dll. Please make sure it is in your library path!
-
-无法继续打包
-
-### 项目结构
-
-    |----config.json			配置json，自动生成
-    |----config.py				配置程序
-    |----db\					人脸数据库
-    |----detection.bat			最后导入计划库的可执行程序
-    |----detection.py			检测程序，项目核心程序
-    |----generate_db.py			录入程序，项目核心程序
-    |----hook.py				使用tk生成透明白布，并禁用键鼠	
-    |----log\ 					日志文件
-    |----Logger.py				生成日志程序
-    |----login.py				登录程序
-    |----README.md				README
-    |----resources\				第三方人脸识别资源文件
-    |----src\					第三方人脸识别资源文件
-    |----test.py				第三方人脸识别资源文件
-    |----train.py				第三方人脸识别资源文件
-    |----util.py				第三方人脸识别资源文件
-
-### 流程图
+### 4. 流程图
 
 1.generate_db.py
 
@@ -227,3 +164,11 @@ Could not locate cudnn_ops_infer64_8.dll. Please make sure it is in your library
 •[computervisioneng](https://github.com/computervisioneng/face-attendance-system/tree/master)[/face-attendance-system (github.com)](https://github.com/computervisioneng/face-attendance-system/tree/master)
 
 •[minivision](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[-ai/Silent-Face-Anti-Spoofing: ](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[静默活体检测（](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[Silent-Face-Anti-Spoofing](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[） ](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[(github.com)](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)
+
+[探秘Windows认证新境界——windows-Credential-Provider-library-CSDN博客](https://blog.csdn.net/gitblog_00069/article/details/139403431)
+
+[Credential Provider_credential provider 眼睛-CSDN博客](https://blog.csdn.net/patdz/article/details/7522195)
+
+[微软 Credential Providers 详解-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279954)
+
+[credential Provider 简易改写攻略_csamplecredential-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279845?spm=1001.2014.3001.5502)
