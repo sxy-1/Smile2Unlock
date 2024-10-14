@@ -2,7 +2,7 @@
 # @Time : 20-6-9 下午3:06
 # @Author : zhuying
 # @Company : Minivision
-# @File : test.py
+# @File : fake_face_test.py
 # @Software : PyCharm
 """
 Create patch from original input image by using bbox coordinate

@@ -28,6 +28,11 @@
     <img src="https://img.shields.io/badge/version-1.0.0-blue?color=#4ec820" alt="v1.0.0"/>
   </a>
 </p>
+## 注意
+
+本分支推荐普通用户使用，相对足够方便和安全，如果您注重更高安全性，希望接入windows登录密码凭据系统，请移步CredentialProvider分支。
+
+
 
 ### 支持
 
@@ -85,10 +90,10 @@ conda create -n Smile2Unlock_last
 pip install cmake==3.29.3 -i https://pypi.mirrors.ustc.edu.cn/simple/
 ```
 
-3.安装 dlib 
+3.安装 dlib  推荐使用pip安装轮子文件
 
 ```
-conda install -c https://conda.anaconda.org/conda-forge dlib 
+https://blog.csdn.net/AI_dataloads/article/details/134063212
 ```
 
 4.安装 face_recognition
@@ -100,21 +105,24 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple face_recognition
 5.安装其他必要库
 
 ```
-pip install opencv-contrib-python==4.9.0.80
-pip install pynput 
-pip install screeninfo
-```
-
-该版本测试成功，仅供参考：
+pip install opencv-contrib-python==4.9.0.80 pynput screeninfo numpy==1.26.4 torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 face_recognition -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ```
-python=3.11.9		创建conda指定版本
-cmake=3.29.3
+
+总结：该版本测试成功，仅供参考：
+
+```
+python=3.11.9		创建conda指定版本，推荐该版本
+cmake=3.29.3		最新版皆可，无严格版本限制
 dlib=19.24.4		特殊的，只有此库使用conda安装
 face-recognition=1.3.0
 opencv-contrib-python=4.9.0.80
 pynput=1.7.7
 screeninfo=0.8.1
+torch=2.2.2
+torchaudio=2.2.2
+torchvision=0.17.2
+numpy=1.26.4
 ```
 
 ### 2. 导入自身人脸数据

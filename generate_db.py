@@ -8,7 +8,7 @@ from PIL import Image, ImageTk
 import face_recognition
 
 import util
-from test import test
+from fake_face_test import test
 
 
 class App:

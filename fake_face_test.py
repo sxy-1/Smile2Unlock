@@ -2,8 +2,16 @@
 # @Time : 20-6-9 下午3:06
 # @Author : zhuying
 # @Company : Minivision
-# @File : test.py
+# @File : fake_face_test.py
 # @Software : PyCharm
+import sys
+import os
+sys.path.append("D:\\py_project\\Smile2Unlock")
+# 获取当前工作目录
+new_path = "D:\\py_project\\Smile2Unlock"
+
+# 更改当前工作目录
+os.chdir(new_path)
 
 import os
 import cv2

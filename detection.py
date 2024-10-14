@@ -12,7 +12,7 @@ from Logger import log
 
 class loginSystem:
     def __init__(self, db_dir):
-
+        log.info("detection")
         self.db_dir = db_dir
 
         self.camera = cv2.VideoCapture(0)

@@ -1,6 +1,15 @@
+import os
+import sys
+sys.path.append("D:\\py_project\\Smile2Unlock")
+# 获取当前工作目录
+new_path = "D:\\py_project\\Smile2Unlock"
+
+# 更改当前工作目录
+os.chdir(new_path)
+
 import cv2
 import datetime
-from test import test
+from fake_face_test import test
 import util
 from Logger import log
 
