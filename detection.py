@@ -1,13 +1,10 @@
-import sys
-
 import cv2
 import time
-import os
 import threading
 from ctypes import windll
-from hook import hook  # 引入新封装的类
-from login import login  # 引入新封装的类
-from Logger import log
+from hook import Hook
+from login import Login
+from logger import log
 
 
 class loginSystem:
@@ -18,11 +15,11 @@ class loginSystem:
         self.camera = cv2.VideoCapture(0)
         self.success_count = 0
         self.lose_count = 0
-        self.hook = hook()
-        self.login = login(db_dir)
+        self.hook = Hook()
+        self.login = Login(db_dir)
 
     def lock_screen(self):
-        user32 = windll.LoadLibrary('user32.dll')
+        user32 = windll.LoadLibrary("user32.dll")
         user32.LockWorkStation()
 
     def process_frame(self):
@@ -43,16 +40,9 @@ class loginSystem:
         return True
 
     def start(self):
-
         # 启动程序控制
         threading.Thread(target=self.hook.start_program).start()
         while True:
-            # self.hook.kill_program()
-            if self.hook.status == 0:
-                self.hook.kill_program()
-                log.info("快捷键退出")
-                # 快捷键退出
-                break
             if self.success_count >= 1:
                 self.hook.kill_program()
                 log.info("success_count>=1,try to kill hook")

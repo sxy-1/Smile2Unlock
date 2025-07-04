@@ -12,7 +12,7 @@
 /generate_tree.py
 /pip_requirements.txt
 /requirements.txt
-
+/.history/
 
 # Python
 *.pyc
