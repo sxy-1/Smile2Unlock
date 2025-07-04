@@ -10,7 +10,6 @@ import traceback
 
 import cv2
 import math
-import torch
 import numpy as np
 import torch.nn.functional as F
 
@@ -18,7 +17,7 @@ import torch.nn.functional as F
 from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
 from src.data_io import transform as trans
 from src.utility import get_kernel, parse_model_name
-
+import torch
 MODEL_MAPPING = {
     'MiniFASNetV1': MiniFASNetV1,
     'MiniFASNetV2': MiniFASNetV2,

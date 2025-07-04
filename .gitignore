@@ -3,6 +3,7 @@
 *.pptx
 
 config.json
+
 /log.txt
 /db/
 /backup/
@@ -15,6 +16,7 @@ config.json
 /pip_requirements.txt
 /requirements.txt
 .vs/
+/.history/
 
 # Python
 *.pyc
@@ -24,6 +26,15 @@ __pycache__/
 *.db
 
 
+# PyQt
+*.pyproj
+*.pyproj.user
+*.suo
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 .idea/
 
 

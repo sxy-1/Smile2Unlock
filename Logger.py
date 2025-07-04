@@ -2,7 +2,6 @@
 
 import logging
 import os
-import time
 from logging import handlers
 from pathlib import Path
 
