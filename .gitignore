@@ -2,8 +2,12 @@
 *.doc
 *.pptx
 
+# config.json会在generate_db运行后自动生成
 config.json
 
+# cpp编译相关
+cpp/Sample*/
+cpp/x64/
 /log.txt
 /db/
 /backup/

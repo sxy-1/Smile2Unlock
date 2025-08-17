@@ -1,26 +1,26 @@
-# main.py
-
-import os
 import sys
+import os
 
-# 您需要修改一下两个路劲，分别为您的conda环境的site-packages路径和smile2unlock_cp的路径
+# 您需要修改一下2两个路径，分别为您的conda环境的site-packages路径和
 sys.path.append("C:\\Users\\sxy\\.conda\\envs\\smile2unlock_cp\\Lib\\site-packages\\")
-sys.path.append("D:\\py_project\\smile2unlock_cp\\")
+script_directory = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_directory)  # 如果不加这一行，当前目录会被错误认为system32
 
-
+import time
 import cv2
-from login import login
+from login import Login
 from Logger import log
 import config
 
 
-
-
 def capture_and_login():
     log.info("main is running")
-    config.load_config('config.json')
+    config.load_config("config.json")
+
     camera = cv2.VideoCapture(0)
-    login_class = login("./db")
+
+    login_class = Login("./db")
+
     success_count = 0
     loss_count = 0
     while True:
@@ -28,10 +28,13 @@ def capture_and_login():
             camera.release()  # 释放摄像头
             return "000000"  # 错误值
         ret, frame = camera.read()
-
         if not ret:
             loss_count += 1
-        result = login_class.login(frame)
+        try:
+            result = login_class.login(frame)
+        except Exception as e:
+            with open("D:\\mylog.txt", "a") as f:
+                f.write("程序已启动8\n" + e.__str__() + "\n")
         if result == 0:
             loss_count += 1
         else:
@@ -39,5 +42,7 @@ def capture_and_login():
             camera.release()  # 释放摄像头
             return config.get_config_value("password")  # 返回值
 
-if __name__ == '__main__':
-    capture_and_login()
+
+if __name__ == "__main__":
+    res = capture_and_login()
+    print(res)

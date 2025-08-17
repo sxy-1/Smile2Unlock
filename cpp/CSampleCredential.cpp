@@ -500,184 +500,186 @@ HRESULT CSampleCredential::CommandLinkClicked(DWORD dwFieldID)
 }
 
 
-
 #include <Python.h>  // 包含Python API的头文件
 #include <windows.h> // 其他必要的头文件
 #include <string>
 #include <thread>   // 包含此头文件以使用睡眠功能
 #include <chrono>   // 包含此头文件以使用时间相关功能
+#include <fstream>  // 包含此头文件以使用文件流
 
 // Collect the username and password into a serialized credential for the correct usage scenario
 // (logon/unlock is what's demonstrated in this sample).  LogonUI then passes these credentials
 // back to the system to log on.
-HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE *pcpgsr,
-                                            _Out_ CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION *pcpcs,
-                                            _Outptr_result_maybenull_ PWSTR *ppwszOptionalStatusText,
-                                            _Out_ CREDENTIAL_PROVIDER_STATUS_ICON *pcpsiOptionalStatusIcon)
+HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr,
+    _Out_ CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs,
+    _Outptr_result_maybenull_ PWSTR* ppwszOptionalStatusText,
+    _Out_ CREDENTIAL_PROVIDER_STATUS_ICON* pcpsiOptionalStatusIcon)
 {
     HRESULT hr = E_UNEXPECTED;
 
-
-
-
+    //std::ofstream logFile("C:\\LoginLog.txt", std::ios::app); // 打开日志文件，追加模式
+    //if (!logFile.is_open()) {
+    //    // 如果日志文件打开失败，可以选择返回错误或者继续执行，具体取决于你的需求
+    //    // 这里选择继续执行，但会输出错误信息到控制台
+    //    OutputDebugStringW(L"Error opening log file!\n");
+    //}
+    //OutputDebugString(L"a");
+    //logFile << "GetSerialization started.\n";
 
     *pcpgsr = CPGSR_NO_CREDENTIAL_NOT_FINISHED;
     *ppwszOptionalStatusText = nullptr;
     *pcpsiOptionalStatusIcon = CPSI_NONE;
     ZeroMemory(pcpcs, sizeof(*pcpcs));
 
-    PyObject* pResult=nullptr;
+    PyObject* pResult = nullptr;
 
-
-    
-   
+    //logFile << "Initializing Python.\n";
+    // 初始化 Python 解释器
 
     Py_Initialize();
+    if (!Py_IsInitialized()) {
 
+        //logFile << "Python initialization failed!\n";
+        return E_FAIL; // 或者其他适当的错误代码
+    }
+    else {
+        //logFile << "Python initialization successful.\n";
+        PyRun_SimpleString("print 'Hello World!!'");
+    }
 
+    //logFile << "Adding Python module search path.\n";
+    // 添加 Python 模块搜索路径
     PyRun_SimpleString("import sys");
-    PyRun_SimpleString("sys.path.append('D:\\py_project\\smile2unlock_cp\\')");
+    PyRun_SimpleString("sys.path.append('D:/py_project/smile2unlock_cp/')");         // 请修改这里！！！！！！！！！！！！！！！！！！！！！！！！！！
 
-
-    PyObject* pName = PyUnicode_DecodeFSDefault("main");  // 模块名，不包含文件扩展名
+    // 导入 Python 模块
+    PyObject* pName = PyUnicode_DecodeFSDefault("smile2unlock_entry");  // 模块名，不包含文件扩展名
     PyObject* pModule = PyImport_Import(pName);
-
-
-    
-
-
 
     Py_DECREF(pName);
 
+    // 获取 sys.path 并写入日志文件 
+    //PyObject* sys_module = PyImport_ImportModule("sys");
+    //if (sys_module) {
+    //    PyObject* path_list = PyObject_GetAttrString(sys_module, "path");
+    //    if (path_list) {
+    //        PyObject* path_repr = PyObject_Repr(path_list);
+    //        if (path_repr) {
+    //            const char* path_str = PyUnicode_AsUTF8(path_repr);
+    //            if (path_str) {
+    //                logFile << "Current sys.path: " << path_str << "\n";
+    //            }
+    //            Py_DECREF(path_repr);
+    //        }
+    //        Py_DECREF(path_list);
+    //    }
+    //    Py_DECREF(sys_module);
+    //}
     if (pModule != nullptr) {
+        //logFile << "Python module imported successfully.\n";
         // 在模块中查找并调用主函数
         PyObject* pFunc = PyObject_GetAttrString(pModule, "capture_and_login");
 
         if (pFunc && PyCallable_Check(pFunc)) {
-            // 这里我们直接调用 capture_image.py 中的逻辑
+            //logFile << "Python function found and callable.\n";
+            // 调用 Python 函数
             pResult = PyObject_CallObject(pFunc, nullptr);
             if (pResult != nullptr) {
-             
-                Py_DECREF(pResult);
+                //logFile << "Python function called successfully.\n";
+                // 函数调用成功
+                //Py_DECREF(pResult); // 注释掉这行，因为后面会用到 pResult
             }
             else {
+                //logFile << "Python function call failed.\n";
+                // 函数调用失败
                 PyErr_Print();
-               
             }
             Py_DECREF(pFunc);
         }
         else {
+            //logFile << "Python function not found or not callable.\n";
+            // 找不到函数或函数不可调用
             PyErr_Print();
-        
         }
 
         Py_DECREF(pModule);
     }
     else {
-        PyErr_Print();
-    
+        //logFile << "Python module import failed.\n";
     }
 
-
-
-    Py_Finalize();
-
-
-
-
- 
-    
+    // 在这里不要 Py_Finalize(); 因为后面可能还需要使用 Python 结果
 
     // For local user, the domain and user name can be split from _pszQualifiedUserName (domain\username).
     // CredPackAuthenticationBuffer() cannot be used because it won't work with unlock scenario.
     if (_fIsLocalUser)
     {
-        
-      
-        
-       
-    
-            PWSTR pszDomain;
-            PWSTR pszUsername;
-            PWSTR pwzProtectedPassword;
+        //logFile << "_fIsLocalUser is true.\n";
+        PWSTR pszDomain;
+        PWSTR pszUsername;
+        PWSTR pwzProtectedPassword;
 
+        //logFile << "Splitting domain and username.\n";
+        hr = SplitDomainAndUsername(_pszQualifiedUserName, &pszDomain, &pszUsername);
+        if (SUCCEEDED(hr))
+        {
+            //logFile << "Domain and username split successfully.\n";
+            KERB_INTERACTIVE_UNLOCK_LOGON kiul;
 
+            if (pResult != nullptr) {
+                //logFile << "pResult is not null.\n";
+                // 将 pResult 转换为宽字符字符串 PCWSTR 类型
+                const wchar_t* result = PyUnicode_AsWideCharString(pResult, nullptr);
 
-            
+                //logFile << "Protecting password.\n";
+                // 使用 ProtectIfNecessaryAndCopyPassword 进行操作
+                hr = ProtectIfNecessaryAndCopyPassword(result, _cpus, &pwzProtectedPassword);
 
+                //logFile << "Initializing KerbInteractiveUnlockLogon.\n";
+                hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
+                CoTaskMemFree(pwzProtectedPassword);
+            }
 
-
-            hr = SplitDomainAndUsername(_pszQualifiedUserName, &pszDomain, &pszUsername);
             if (SUCCEEDED(hr))
             {
-               
+                //logFile << "KerbInteractiveUnlockLogon initialized successfully.\n";
+                // We use KERB_INTERACTIVE_UNLOCK_LOGON in both unlock and logon scenarios.  It contains a
+                // KERB_INTERACTIVE_LOGON to hold the creds plus a LUID that is filled in for us by Winlogon
+                // as necessary.
 
-
-
-                KERB_INTERACTIVE_UNLOCK_LOGON kiul;
-
-                if (pResult != nullptr) {
-                    
-
-                    // 将 pResult 转换为宽字符字符串 PCWSTR 类型
-                    const wchar_t* result = PyUnicode_AsWideCharString(pResult, nullptr);
-
-                    // 使用 ProtectIfNecessaryAndCopyPassword 进行操作
-                    hr = ProtectIfNecessaryAndCopyPassword(result, _cpus, &pwzProtectedPassword);
-                    //hr = SHStrDupW(L"123456", &pwzProtectedPassword);
-
-                    //WCHAR wszLogFilePath[] = L"C:\\LoginLog.txt";
-                    //FILE* pLogFile = nullptr;
-
-                    //// 打开或创建日志文件
-                    //_wfopen_s(&pLogFile, wszLogFilePath, L"a");  // "a" 表示追加模式
-                    //if (pLogFile)
-                    //{
-                    //    // 获取当前时间
-                    //    SYSTEMTIME st;
-                    //    GetLocalTime(&st);
-
-                    //    // 写入当前日期和时间到日志文件
-                    //    fwprintf(pLogFile, L"Login attempt onhhhh: %04d-%02d-%02d %02d:%02d:%02d\n",
-                    //        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-
-                    //    fclose(pLogFile);  // 关闭日志文件
-                    //}
-
-                    hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
-                    CoTaskMemFree(pwzProtectedPassword);
-
-                }
-           
-                
+                //logFile << "Packing KerbInteractiveUnlockLogon.\n";
+                hr = KerbInteractiveUnlockLogonPack(kiul, &pcpcs->rgbSerialization, &pcpcs->cbSerialization);
                 if (SUCCEEDED(hr))
                 {
-                    // We use KERB_INTERACTIVE_UNLOCK_LOGON in both unlock and logon scenarios.  It contains a
-                    // KERB_INTERACTIVE_LOGON to hold the creds plus a LUID that is filled in for us by Winlogon
-                    // as necessary.
-
-                    hr = KerbInteractiveUnlockLogonPack(kiul, &pcpcs->rgbSerialization, &pcpcs->cbSerialization);
+                    //logFile << "KerbInteractiveUnlockLogon packed successfully.\n";
+                    ULONG ulAuthPackage;
+                    //logFile << "Retrieving NegotiateAuthPackage.\n";
+                    hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
                     if (SUCCEEDED(hr))
                     {
-                        ULONG ulAuthPackage;
-                        hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
-                        if (SUCCEEDED(hr))
-                        {
-                            pcpcs->ulAuthenticationPackage = ulAuthPackage;
-                            pcpcs->clsidCredentialProvider = CLSID_CSample;
-                            // At this point the credential has created the serialized credential used for logon
-                            // By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know
-                            // that we have all the information we need and it should attempt to submit the
-                            // serialized credential.
-                            *pcpgsr = CPGSR_RETURN_CREDENTIAL_FINISHED;
-                        }
+                        //logFile << "NegotiateAuthPackage retrieved successfully.\n";
+                        pcpcs->ulAuthenticationPackage = ulAuthPackage;
+                        pcpcs->clsidCredentialProvider = CLSID_CSample;
+                        // At this point the credential has created the serialized credential used for logon
+                        // By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know
+                        // that we have all the information we need and it should attempt to submit the
+                        // serialized credential.
+                        *pcpgsr = CPGSR_RETURN_CREDENTIAL_FINISHED;
                     }
                 }
-                CoTaskMemFree(pszDomain);
-                CoTaskMemFree(pszUsername);
             }
-            
-        
+            CoTaskMemFree(pszDomain);
+            CoTaskMemFree(pszUsername);
+        }
+
+
+        // 确保在退出前调用 Py_Finalize()
+        //logFile << "Finalizing Python.\n";
+        Py_Finalize();
+
+        //logFile << "GetSerialization finished.\n";
+        //logFile.close(); // 关闭日志文件
+
     }
     else
     {
