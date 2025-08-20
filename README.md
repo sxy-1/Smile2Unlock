@@ -53,7 +53,7 @@
 1.创建conda环境
 
 ```
-conda create -n Smile2Unlock_last
+conda create -n Smile2Unlock
 ```
 
 2.安装 cmake（可能不需要指定镜像）
@@ -125,7 +125,9 @@ numpy=1.26.4
 
 您可以在config.json中启动特殊按键，1为启动（默认），0为关闭，当开启时，你可以按下“分钟的十分位”来强制关闭人脸识别，比如“20:13”可以按数字“1”。
 
-您可以在config,json中设置透明度，1为完全透明，0为完全不透明，默认0.5
+如果您有任何不理解的地方，请加入QQ群：702645243。
+
+您可以在config.json中设置透明度，1为完全透明，0为完全不透明，默认0.5
 
 ### 6.打包
 
@@ -159,8 +161,8 @@ Could not locate cudnn_ops_infer64_8.dll. Please make sure it is in your library
     |----config.json			配置json，自动生成
     |----config.py				配置程序
     |----db\					人脸数据库
-    |----detection.bat			最后导入计划库的可执行程序
-    |----detection.py			检测程序，项目核心程序  程序入口！！！
+    |----smile2unlock_entry.bat			最后导入计划库的可执行程序
+    |----smile2unlock_entry.py			检测程序，项目核心程序  程序入口！！！
     |----generate_db.py		录入程序，项目核心程序
     |----hook.py				使用tk生成透明白布，并禁用键鼠
     |----log\ 					日志文件
@@ -176,13 +178,13 @@ Could not locate cudnn_ops_infer64_8.dll. Please make sure it is in your library
 
 ![image-20240610202326514](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102023562.png)
 
-2.detection.py
+2.smile2unlock_entry.py
 
 ![image-20240610202418306](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102024455.png)
 
 ### 参考
 
-•https://github.com/Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow
+•[Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow](https://github.com/Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow)
 
 •[saksham-jain](https://github.com/saksham-jain/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition)[/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition (github.com)](https://github.com/saksham-jain/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition)
 

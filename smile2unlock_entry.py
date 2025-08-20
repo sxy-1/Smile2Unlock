@@ -9,7 +9,7 @@ from logger import log
 
 class loginSystem:
     def __init__(self, db_dir):
-        log.info("detection")
+        log.info("smile2unlock_entry")
         self.db_dir = db_dir
 
         self.camera = cv2.VideoCapture(0)
