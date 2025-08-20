@@ -1,15 +1,14 @@
 import sys
 import os
 
-# 您需要修改一下2两个路径，分别为您的conda环境的site-packages路径和
+# 您需要修改一下路径，为您的conda环境的site-packages路径和
 sys.path.append("C:\\Users\\sxy\\.conda\\envs\\smile2unlock_cp\\Lib\\site-packages\\")
 script_directory = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_directory)  # 如果不加这一行，当前目录会被错误认为system32
 
-import time
 import cv2
 from login import Login
-from Logger import log
+from logger import log
 import config
 
 
@@ -33,8 +32,7 @@ def capture_and_login():
         try:
             result = login_class.login(frame)
         except Exception as e:
-            with open("D:\\mylog.txt", "a") as f:
-                f.write("程序已启动8\n" + e.__str__() + "\n")
+            log.error(f"Login failed: {e}")
         if result == 0:
             loss_count += 1
         else:

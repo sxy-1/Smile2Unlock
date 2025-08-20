@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 <p align="center">
   <img width="18%" align="center" src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406050530509.jpg" alt="logo">
 </p>
@@ -29,32 +19,15 @@
   </a>
 </p>
 
-
 ### 支持
 
-- [x] 人脸识别
-
-- [x] 侧脸识别
-
-- [x] 活体检测（防止照片解锁）
-
-- [x] 数据持久化
-
-- [x] 多用户识别
-  
-  
-  
-  
-  
-  
-
-
+- [X] 人脸识别
+- [X] 侧脸识别
+- [X] 活体检测（防止照片解锁）
+- [X] 数据持久化
+- [X] 多用户识别
 
 在windows登录界面选择本凭据，直接登录，便会启动程序，进行人脸识别，若10秒内未出现预设人脸，则退回，使用密码登录。
-
-
-
-
 
 ### 如何使用
 
@@ -62,7 +35,7 @@
 
 ### 1.安装
 
-由于环境错综复杂，本项目也不提供requirements.txt 
+由于环境错综复杂，本项目也不提供requirements.txt
 
 请注意，本项目强烈推荐使用conda环境，但不要使用conda install,只使用pip install，否则将在凭据生成后产生引用问题
 
@@ -121,7 +94,7 @@ numpy=1.26.4
 
 2.随后在config.json中，修改您的password.
 
-3.在main.py中，修改您的conda路径和项目路径
+3.在smile2unlock_entry.py中，修改您的conda路径
 
 4.从visual studio中，修改您的引用库
 
@@ -131,13 +104,9 @@ numpy=1.26.4
 
 6.生成dll，移动至system32,运行cpp根目录下的register.reg
 
-
-
 ### 3. 交流
 
-笔者并不期望读者仅根据以上文字便能成功注册凭证系统，如果您有任何不理解的地方，请加入QQ群：702645243
-
-
+笔者并不期望读者仅根据以上文字便能成功注册凭证系统，如果您有任何不理解的地方，请加入QQ群：702645243，群文件中有流程视频。
 
 ### 4. 流程图
 
@@ -145,19 +114,13 @@ numpy=1.26.4
 
 ![image-20240610202326514](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102023562.png)
 
-
-
 2.detection.py
 
 ![image-20240610202418306](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102024455.png)
 
-
-
-
-
 ### 参考
 
-•https://github.com/Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow
+•[Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow](https://github.com/Yiqingde/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition-Opencv-Tensorflow)
 
 •[saksham-jain](https://github.com/saksham-jain/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition)[/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition (github.com)](https://github.com/saksham-jain/Lock-Unlock-Laptop-PC-Screen-Using-Face-Recognition)
 
@@ -165,10 +128,10 @@ numpy=1.26.4
 
 •[minivision](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[-ai/Silent-Face-Anti-Spoofing: ](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[静默活体检测（](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[Silent-Face-Anti-Spoofing](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[） ](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)[(github.com)](https://github.com/minivision-ai/Silent-Face-Anti-Spoofing/tree/master)
 
-[探秘Windows认证新境界——windows-Credential-Provider-library-CSDN博客](https://blog.csdn.net/gitblog_00069/article/details/139403431)
+•[探秘Windows认证新境界——windows-Credential-Provider-library-CSDN博客](https://blog.csdn.net/gitblog_00069/article/details/139403431)
 
-[Credential Provider_credential provider 眼睛-CSDN博客](https://blog.csdn.net/patdz/article/details/7522195)
+•[Credential Provider_credential provider 眼睛-CSDN博客](https://blog.csdn.net/patdz/article/details/7522195)
 
-[微软 Credential Providers 详解-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279954)
+•[微软 Credential Providers 详解-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279954)
 
-[credential Provider 简易改写攻略_csamplecredential-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279845?spm=1001.2014.3001.5502)
+•[credential Provider 简易改写攻略_csamplecredential-CSDN博客](https://blog.csdn.net/lionzl/article/details/103279845?spm=1001.2014.3001.5502)
