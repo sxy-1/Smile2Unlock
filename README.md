@@ -1,5 +1,6 @@
 <p align="center">
-  <img width="18%" align="center" src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406050530509.jpg" alt="logo">
+
+  <img width="18%" align="center" src="https://github.com/user-attachments/assets/41b2a246-d223-4afd-aa72-b0af61a3260b" alt="logo">
 </p>
   <h1 align="center">
   Smile2Unlock
@@ -18,6 +19,7 @@
     <img src="https://img.shields.io/badge/version-1.0.0-blue?color=#4ec820" alt="v1.0.0"/>
   </a>
 </p>
+
 ## 注意
 
 本分支推荐普通用户使用，相对足够方便和安全，如果您注重更高安全性，希望接入windows登录密码凭据系统，请移步CredentialProvider分支。
@@ -32,7 +34,7 @@
 - [X] 开机自启/解锁自启
 - [X] 多用户识别
 
-<img src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406101920647.png" alt="image-20240610192029932" style="zoom: 33%;" />
+<img width="2505" height="1673" alt="202406101920647" src="https://github.com/user-attachments/assets/0273de75-6bb4-4f09-a5e6-6fab1cf93c7a" />
 
 运行时，键鼠将禁止使用（防止任务管理器退出），必须在一分钟内人脸识别成功（每0.5秒一次检测，共120次），自动解锁，否则锁定计算机。
 
@@ -105,7 +107,8 @@ numpy=1.26.4
 
 ### 3. 尝试启动
 
-编辑detetion.bat 文件
+如果您仅需运行程序，使用 python smile2unlock_entry.py
+而如果您想生成本地可执行文件，请编辑smile2unlock_entry.bat 文件
 
  可以直接运行，查看效果
 
@@ -113,11 +116,12 @@ numpy=1.26.4
 
 参考[windows锁屏时启动某个程序（使用win任务计划库）_windows 计划任务 用户登录时运行 锁屏状态执行吗-CSDN博客](https://blog.csdn.net/weixin_45285564/article/details/133299981)
 
-![](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102010831.png)
+<img width="3346" height="1880" alt="202406102010831" src="https://github.com/user-attachments/assets/62302c14-1895-401c-b462-5d9e1ac92bc2" />
 
 值得注意的是 请务必指定bat文件夹路径（在“起始于”中填写文件夹）
 
-![image-20240610200531469](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102005548.png)
+<img width="788" height="869" alt="202406102005548" src="https://github.com/user-attachments/assets/2112605c-8d81-4fc5-ba32-aae7b56b3fb5" />
+
 
 完成后，您可以在右侧运行中尝试运行。
 
@@ -175,12 +179,12 @@ Could not locate cudnn_ops_infer64_8.dll. Please make sure it is in your library
 ### 流程图
 
 1.generate_db.py
+<img width="458" height="655" alt="202406102023562" src="https://github.com/user-attachments/assets/482650f0-8b26-402c-849a-c199e970a405" />
 
-![image-20240610202326514](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102023562.png)
 
 2.smile2unlock_entry.py
+<img width="1571" height="2257" alt="202406102024455" src="https://github.com/user-attachments/assets/cfe6ca65-2ba5-4f6c-acf5-773d4c554767" />
 
-![image-20240610202418306](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102024455.png)
 
 ### 参考
 
