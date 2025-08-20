@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="18%" align="center" src="https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406050530509.jpg" alt="logo">
+  <img width="18%" align="center" src="https://github.com/user-attachments/assets/41b2a246-d223-4afd-aa72-b0af61a3260b" alt="logo">
 </p>
   <h1 align="center">
   Smile2Unlock(cp凭据分支)
@@ -112,11 +112,11 @@ numpy=1.26.4
 
 1.generate_db.py
 
-![image-20240610202326514](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102023562.png)
+![image-20240610202326514](https://github.com/user-attachments/assets/482650f0-8b26-402c-849a-c199e970a405)
 
 2.detection.py
 
-![image-20240610202418306](https://obssh.obs.cn-east-3.myhuaweicloud.com/img_sxy/202406102024455.png)
+![image-20240610202418306](https://github.com/user-attachments/assets/cfe6ca65-2ba5-4f6c-acf5-773d4c554767)
 
 ### 参考
 
