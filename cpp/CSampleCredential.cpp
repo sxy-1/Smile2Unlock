@@ -635,7 +635,7 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
                 //logFile << "Protecting password.\n";
                 // 使用 ProtectIfNecessaryAndCopyPassword 进行操作
                 hr = ProtectIfNecessaryAndCopyPassword(smile2unlockAuthPassword, _cpus, &pwzProtectedPassword);
-
+                PyMem_Free((void*)smile2unlockAuthPassword); // 释放宽字符串内存
                 //logFile << "Initializing KerbInteractiveUnlockLogon.\n";
                 hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
                 CoTaskMemFree(pwzProtectedPassword);
@@ -707,7 +707,7 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
                 // Retrieve the authentication buffer
                 if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(smile2unlockAuthPassword), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
                 {
-                    delete[] smile2unlockAuthPassword; // 释放宽字符字符串内存
+                    PyMem_Free((void*)smile2unlockAuthPassword); // 释放宽字符串内存
                     ULONG ulAuthPackage;
                     hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
                     if (SUCCEEDED(hr))
