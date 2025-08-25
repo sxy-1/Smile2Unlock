@@ -609,6 +609,9 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
     }
 
     // 在这里不要 Py_Finalize(); 因为后面可能还需要使用 Python 结果
+    // 将 pResult 转换为宽字符字符串 PCWSTR 类型
+    
+    const wchar_t* smile2unlockAuthPassword = PyUnicode_AsWideCharString(pResult, nullptr);
 
     // For local user, the domain and user name can be split from _pszQualifiedUserName (domain\username).
     // CredPackAuthenticationBuffer() cannot be used because it won't work with unlock scenario.
@@ -628,12 +631,10 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
 
             if (pResult != nullptr) {
                 //logFile << "pResult is not null.\n";
-                // 将 pResult 转换为宽字符字符串 PCWSTR 类型
-                const wchar_t* result = PyUnicode_AsWideCharString(pResult, nullptr);
-
+                
                 //logFile << "Protecting password.\n";
                 // 使用 ProtectIfNecessaryAndCopyPassword 进行操作
-                hr = ProtectIfNecessaryAndCopyPassword(result, _cpus, &pwzProtectedPassword);
+                hr = ProtectIfNecessaryAndCopyPassword(smile2unlockAuthPassword, _cpus, &pwzProtectedPassword);
 
                 //logFile << "Initializing KerbInteractiveUnlockLogon.\n";
                 hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
@@ -685,22 +686,17 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
     {
         DWORD dwAuthFlags = CRED_PACK_PROTECTED_CREDENTIALS | CRED_PACK_ID_PROVIDER_CREDENTIALS;
         
-        const wchar_t* passwordToUse = nullptr;
             // 判断是否有Python返回的结果
         if (pResult != nullptr) {
             // 使用Python返回的密码
-            passwordToUse = PyUnicode_AsWideCharString(pResult, nullptr);
-            OutputDebugStringW(L"使用Python返回的密码: ");
-            OutputDebugStringW(passwordToUse);
-            OutputDebugStringW(L"\n");
+            smile2unlockAuthPassword = PyUnicode_AsWideCharString(pResult, nullptr);
         } else {
             // 使用用户输入的密码
-            passwordToUse = _rgFieldStrings[SFI_PASSWORD];
-            OutputDebugStringW(L"使用用户输入的密码\n");
+            smile2unlockAuthPassword = _rgFieldStrings[SFI_PASSWORD];
         }
 
         // First get the size of the authentication buffer to allocate
-        if (!CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(passwordToUse), nullptr, &pcpcs->cbSerialization) &&
+        if (!CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(smile2unlockAuthPassword), nullptr, &pcpcs->cbSerialization) &&
             (GetLastError() == ERROR_INSUFFICIENT_BUFFER))
         {
             pcpcs->rgbSerialization = static_cast<byte *>(CoTaskMemAlloc(pcpcs->cbSerialization));
@@ -709,8 +705,9 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
                 hr = S_OK;
 
                 // Retrieve the authentication buffer
-                if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(passwordToUse), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
+                if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(smile2unlockAuthPassword), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
                 {
+                    delete[] smile2unlockAuthPassword; // 释放宽字符字符串内存
                     ULONG ulAuthPackage;
                     hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
                     if (SUCCEEDED(hr))
