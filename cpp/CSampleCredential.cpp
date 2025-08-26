@@ -607,8 +607,19 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
     else {
         //logFile << "Python module import failed.\n";
     }
-
+    
     // 在这里不要 Py_Finalize(); 因为后面可能还需要使用 Python 结果
+    // 将 pResult 转换为宽字符字符串 PCWSTR 类型
+    
+    PWSTR authPassword;
+    if (pResult == nullptr) {
+        authPassword = _rgFieldStrings[SFI_PASSWORD];
+    } else {
+        authPassword = PyUnicode_AsWideCharString(pResult, nullptr);
+    }
+    // 释放 pResult
+    Py_XDECREF(pResult);
+
 
     // For local user, the domain and user name can be split from _pszQualifiedUserName (domain\username).
     // CredPackAuthenticationBuffer() cannot be used because it won't work with unlock scenario.
@@ -626,19 +637,11 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
             //logFile << "Domain and username split successfully.\n";
             KERB_INTERACTIVE_UNLOCK_LOGON kiul;
 
-            if (pResult != nullptr) {
-                //logFile << "pResult is not null.\n";
-                // 将 pResult 转换为宽字符字符串 PCWSTR 类型
-                const wchar_t* result = PyUnicode_AsWideCharString(pResult, nullptr);
+            hr = ProtectIfNecessaryAndCopyPassword(authPassword, _cpus, &pwzProtectedPassword);
+            //logFile << "Initializing KerbInteractiveUnlockLogon.\n";
+            hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
+            CoTaskMemFree(pwzProtectedPassword);
 
-                //logFile << "Protecting password.\n";
-                // 使用 ProtectIfNecessaryAndCopyPassword 进行操作
-                hr = ProtectIfNecessaryAndCopyPassword(result, _cpus, &pwzProtectedPassword);
-
-                //logFile << "Initializing KerbInteractiveUnlockLogon.\n";
-                hr = KerbInteractiveUnlockLogonInit(pszDomain, pszUsername, pwzProtectedPassword, _cpus, &kiul);
-                CoTaskMemFree(pwzProtectedPassword);
-            }
 
             if (SUCCEEDED(hr))
             {
@@ -671,22 +674,13 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
             CoTaskMemFree(pszDomain);
             CoTaskMemFree(pszUsername);
         }
-
-
-        // 确保在退出前调用 Py_Finalize()
-        //logFile << "Finalizing Python.\n";
-        Py_Finalize();
-
-        //logFile << "GetSerialization finished.\n";
-        //logFile.close(); // 关闭日志文件
-
     }
     else
     {
         DWORD dwAuthFlags = CRED_PACK_PROTECTED_CREDENTIALS | CRED_PACK_ID_PROVIDER_CREDENTIALS;
-
+        
         // First get the size of the authentication buffer to allocate
-        if (!CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(_rgFieldStrings[SFI_PASSWORD]), nullptr, &pcpcs->cbSerialization) &&
+        if (!CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(authPassword), nullptr, &pcpcs->cbSerialization) &&
             (GetLastError() == ERROR_INSUFFICIENT_BUFFER))
         {
             pcpcs->rgbSerialization = static_cast<byte *>(CoTaskMemAlloc(pcpcs->cbSerialization));
@@ -695,7 +689,7 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
                 hr = S_OK;
 
                 // Retrieve the authentication buffer
-                if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(_rgFieldStrings[SFI_PASSWORD]), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
+                if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(authPassword), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
                 {
                     ULONG ulAuthPackage;
                     hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
@@ -731,6 +725,14 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
             }
         }
     }
+    // 释放authPassword内存
+    if (authPassword != _rgFieldStrings[SFI_PASSWORD]) {
+        PyMem_Free((void*)authPassword);
+    }
+    // 确保在退出前调用 Py_Finalize()
+    //logFile << "Finalizing Python.\n";
+    Py_Finalize();  
+
     return hr;
 }
 
