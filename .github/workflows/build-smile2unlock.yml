@@ -31,7 +31,9 @@ jobs:
 
       - name: 安装其他依赖
         shell: bash -l {0}
-        run: pip install -r requirements.txt
+        run: |
+          pip install setuptools
+          pip install -r requirements.txt
 
       - name: 打包为Windows可执行文件
         shell: bash -l {0}
