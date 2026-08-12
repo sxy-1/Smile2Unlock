@@ -3,20 +3,23 @@ import os
 
 
 CONFIG_FILE = "config.json"
-DEFAULT_CONFIG = {"special_key": 1, "transparency": 0.5}
+DEFAULT_CONFIG = {"special_key": 1, "transparency": 0.5, "check_interval": 0.5, "total_duration": 60.0}
 
 
 def load_config(file_path):
     if not os.path.exists(file_path):
-        # Create the file with default settings if it doesn't exist
         with open(file_path, "w") as f:
             json.dump(DEFAULT_CONFIG, f, indent=4)
-        return DEFAULT_CONFIG
+        return DEFAULT_CONFIG.copy()
     else:
-        # Load the existing config file
         with open(file_path) as f:
-            print("config_info")
-            return json.load(f)
+            config = json.load(f)
+        # Merge any missing default keys into existing config
+        missing = {k: v for k, v in DEFAULT_CONFIG.items() if k not in config}
+        if missing:
+            config.update(missing)
+            save_config(file_path, config)
+        return config
 
 
 def save_config(file_path, config):
@@ -48,9 +51,6 @@ def list_config():
     config = load_config(CONFIG_FILE)
     return config
 
-
-# Initial load or create config file
-config_info = load_config(CONFIG_FILE)
 
 # Example usage
 if __name__ == "__main__":
