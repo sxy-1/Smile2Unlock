@@ -27,7 +27,7 @@ jobs:
 
       - name: 安装 dlib (CPU版本)
         shell: bash -l {0}
-        run: conda install "dlib=20.0.0=*cpu*" -c conda-forge -y
+        run: conda install "dlib=20.0.0=*cpu*" setuptools -c conda-forge -y
 
       - name: 安装其他依赖
         shell: bash -l {0}
