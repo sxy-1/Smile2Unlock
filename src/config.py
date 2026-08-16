@@ -3,7 +3,7 @@ import os
 
 
 CONFIG_FILE = "config.json"
-DEFAULT_CONFIG = {"special_key": 1, "transparency": 0.5, "check_interval": 0.5, "total_duration": 60.0}
+DEFAULT_CONFIG = {"special_key": 1, "transparency": 0.5, "check_interval": 0.5, "total_duration": 60.0, "relock_timeout": -1, "lock_hotkey": "<ctrl>+<shift>+l"}
 
 
 def load_config(file_path):
