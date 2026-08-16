@@ -1,0 +1,10 @@
+name: Build (feature/auto-relock-on-idle)
+
+on:
+  push:
+    branches:
+      - feature/auto-relock-on-idle
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-smile2unlock.yml

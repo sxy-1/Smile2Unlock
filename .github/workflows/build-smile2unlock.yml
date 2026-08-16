@@ -37,14 +37,9 @@ jobs:
         shell: bash -l {0}
         run: pyinstaller --clean --noconfirm ./smile2unlock.spec
 
-      - name: 打包构建产物为压缩包
-        shell: pwsh
-        run: |
-          Compress-Archive -Path dist/Smile2Unlock/* -DestinationPath dist/Smile2Unlock.zip
-
       - name: 上传 Windows 构建产物
         uses: actions/upload-artifact@v4
         with:
           name: Smile2Unlock-win
-          path: dist/Smile2Unlock.zip
+          path: dist/Smile2Unlock
           retention-days: 7

@@ -7,6 +7,7 @@ import cv2
 
 import src.config as config
 from src import util
+from src.auto_relock import RelockWatcher
 from src.hook import Hook
 from src.logger import log
 from src.login import Login
@@ -118,5 +119,28 @@ if __name__ == "__main__":
     config.load_config(config.CONFIG_FILE)
 
     db_dir = "./db"
-    frs = LoginSystem(db_dir)
-    frs.start()
+    timeout = config.get_config_value("relock_timeout")
+    hotkey = config.get_config_value("lock_hotkey") or ""
+    use_watcher = timeout is not None and timeout >= 0
+
+    while True:
+        frs = LoginSystem(db_dir)
+        frs.start()
+        frs.camera.release()  # start() 返回后摄像头不再需要，显式释放确保循环时可重新打开
+
+        # 未成功解锁（超时锁屏路径），直接退出
+        if frs.success_count < 1:
+            break
+
+        # 成功解锁但不启动 watcher，直接退出
+        if not use_watcher:
+            break
+
+        watcher = RelockWatcher(timeout=float(timeout), hotkey=hotkey)
+        watcher.start()
+        watcher.wait()
+
+        if watcher.relocked:
+            # 真锁已触发，进程退出，smile2unlock 由外部自启机制重新拉起
+            break
+        # 快捷键触发：loop → 重新创建 LoginSystem，展示白屏

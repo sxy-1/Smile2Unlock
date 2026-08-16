@@ -3,7 +3,6 @@
 白屏模拟死机程序
 """
 
-import sys
 from datetime import datetime
 from tkinter import Tk
 
@@ -91,11 +90,6 @@ class Hook:
         for root in self.roots:
             if root.winfo_exists():
                 root.quit()  # 停止窗口的主循环
-        print("2")
-
-        # 确保程序退出
-        sys.exit(0)
-        print("3")
 
     def unlock_by_special_key(self, key):
         if config.get_config_value("special_key") == 0:
