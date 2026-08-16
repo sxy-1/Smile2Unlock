@@ -80,6 +80,11 @@ jobs:
         with:
           path: dist
 
+      - name: 打包发布产物
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/Smile2Unlock-win/Smile2Unlock/* -DestinationPath dist/Smile2Unlock-win/Smile2Unlock.zip
+
       - name: 清理同版本的预发布版本（正式版发布时）
         run: |
           VERSION=${{ needs.get-version.outputs.version }}
@@ -92,14 +97,14 @@ jobs:
           # 如果当前是正式版，删除所有同版本的预发布版本
           if [ "$IS_PRERELEASE" = "false" ]; then
             echo "🔍 检查同版本的预发布版本..."
-            
+
             # 查找同版本的预发布版本（如 v1.0.3-beta, v1.0.3-alpha 等）
             SAME_VERSION_PRERELEASES=$(gh release list --limit 100 | grep "Pre-release" | awk '{print $1}' | grep "^v$BASE_VERSION-")
-            
+
             if [ -n "$SAME_VERSION_PRERELEASES" ]; then
               echo "�️  发现同版本预发布版本，准备删除:"
               echo "$SAME_VERSION_PRERELEASES"
-              
+
               # 逐个删除
               echo "$SAME_VERSION_PRERELEASES" | while read -r PRERELEASE_TAG; do
                 echo "🗑️  删除 $PRERELEASE_TAG..."
@@ -107,7 +112,7 @@ jobs:
                 git push --delete origin "$PRERELEASE_TAG" 2>/dev/null || echo "⚠️  Tag 删除失败"
                 git tag -d "$PRERELEASE_TAG" 2>/dev/null || true
               done
-              
+
               echo "✅ 同版本预发布版本已清理"
             else
               echo "ℹ️  未找到同版本预发布版本"
@@ -131,54 +136,54 @@ jobs:
           # 只有当前版本是预发布版时，才检查是否需要转正上一版本
           if [ "$IS_PRERELEASE" = "true" ]; then
             echo "🔍 检查是否需要转正上一版本..."
-            
+
             # 获取最新的预发布版本（排除当前版本）
             PREV_PRERELEASE=$(gh release list --limit 100 | grep 'Pre-release' | awk '{print $1}' | grep -v "^v$VERSION$" | head -n1)
-            
+
             if [ -n "$PREV_PRERELEASE" ]; then
               echo "📝 找到上一预发布版本: $PREV_PRERELEASE"
-              
+
               # 提取上一版本的基础版本号
               PREV_BASE=$(echo "$PREV_PRERELEASE" | sed 's/^v//' | sed 's/-.*$//')
-              
+
               echo "📊 版本对比: $PREV_BASE vs $BASE_VERSION"
-              
+
               # 比较版本号（使用简单的字符串比较 + sort -V）
               LARGER=$(printf "%s\n%s\n" "$PREV_BASE" "$BASE_VERSION" | sort -V | tail -n1)
-              
+
               if [ "$LARGER" = "$BASE_VERSION" ] && [ "$PREV_BASE" != "$BASE_VERSION" ]; then
                 echo "🎉 检测到版本号前缀变大: $PREV_BASE → $BASE_VERSION"
                 echo "🔄 开始转正 $PREV_PRERELEASE 为正式版..."
-                
+
                 # 1. 创建临时目录存放旧产物
                 mkdir -p old-artifacts
-                
+
                 # 2. 下载旧版本产物（失败则跳过转正）
                 echo "📥 下载旧版本产物..."
                 if gh release download "$PREV_PRERELEASE" --dir old-artifacts/ 2>/dev/null; then
                   echo "✅ 产物下载成功"
-                  
+
                   # 3. 获取旧版本指向的 commit
                   echo "🔍 获取旧版本 commit..."
                   PREV_COMMIT=$(git rev-list -n 1 "$PREV_PRERELEASE" 2>/dev/null || echo "")
-                  
+
                   if [ -z "$PREV_COMMIT" ]; then
                     echo "⚠️  无法获取旧版本 commit，使用当前 HEAD"
                     PREV_COMMIT="HEAD~1"
                   fi
-                  
+
                   # 4. 删除旧版本 release 和 tag
                   echo "🗑️  删除旧版本 release 和 tag..."
                   gh release delete "$PREV_PRERELEASE" --yes 2>/dev/null || echo "⚠️  Release 删除失败或不存在"
                   git push --delete origin "$PREV_PRERELEASE" 2>/dev/null || echo "⚠️  Tag 删除失败或不存在"
                   git tag -d "$PREV_PRERELEASE" 2>/dev/null || true
-                  
+
                   # 5. 创建新的正式版 tag
                   NEW_STABLE_TAG="v$PREV_BASE"
                   echo "🏷️  创建新正式版 tag: $NEW_STABLE_TAG"
                   git tag "$NEW_STABLE_TAG" "$PREV_COMMIT"
                   git push origin "$NEW_STABLE_TAG"
-                  
+
                   # 6. 创建新的正式版 release（使用 GitHub 自动生成 changelog）
                   echo "🎊 创建正式版 release: $NEW_STABLE_TAG"
                   gh release create "$NEW_STABLE_TAG" \
@@ -186,7 +191,7 @@ jobs:
                     --notes "本版本由 \`$PREV_PRERELEASE\` 自动转为正式版。" \
                     --generate-notes \
                     old-artifacts/*
-                  
+
                   echo "✅ 成功将 $PREV_PRERELEASE 转为正式版 $NEW_STABLE_TAG"
                   echo "promoted=true" >> $GITHUB_OUTPUT
                   echo "promoted_tag=$NEW_STABLE_TAG" >> $GITHUB_OUTPUT

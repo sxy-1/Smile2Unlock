@@ -7,5 +7,4 @@ on:
 
 jobs:
   build:
-    if: startsWith(github.event.head_commit.message, 'release')
     uses: ./.github/workflows/build-smile2unlock.yml
